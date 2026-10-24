@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aurum Labs – Order Tech Parts</title>
+<style>
+:root{--bg:#FAF6EE;--surface:#F1E8D8;--card:#FFFDF8;--text:#3B2A20;--muted:#8C7B6B;--gold:#B08D3C;--mocha:#6F4E37;--line:#E2D6C0;--on-gold:#fff;color-scheme:light;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1E1612;--surface:#2A201A;--card:#251C16;--text:#F3EADB;--muted:#B7A793;--gold:#D4AF61;--mocha:#C9A27F;--line:#3A2D24;--on-gold:#1E1612;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1E1612;--surface:#2A201A;--card:#251C16;--text:#F3EADB;--muted:#B7A793;--gold:#D4AF61;--mocha:#C9A27F;--line:#3A2D24;--on-gold:#1E1612;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Georgia,"Times New Roman",serif;line-height:1.5}
+.sans{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+header{display:flex;justify-content:space-between;align-items:center;padding:18px 5vw;border-bottom:1px solid var(--line)}
+.logo{font-size:1.4rem;letter-spacing:.12em;text-transform:uppercase}
+.logo b{color:var(--gold);font-weight:400}
+button{font-family:system-ui,sans-serif;cursor:pointer}
+.cartbtn{background:none;border:1px solid var(--gold);color:var(--text);padding:8px 16px;border-radius:999px;font-size:.9rem}
+.cartbtn span{background:var(--gold);color:var(--on-gold);border-radius:999px;padding:1px 8px;margin-left:6px;font-size:.8rem}
+.hero{text-align:center;padding:64px 5vw 40px;background:linear-gradient(var(--surface),var(--bg))}
+.hero h1{font-weight:400;font-size:clamp(2rem,6vw,3.4rem);margin:0 0 12px}
+.hero p{color:var(--muted);max-width:560px;margin:0 auto;font-size:1.05rem}
+.filters{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:20px 5vw}
+.filters button{background:var(--card);border:1px solid var(--line);color:var(--text);padding:8px 16px;border-radius:999px;font-size:.88rem}
+.filters button.on{background:var(--mocha);color:var(--bg);border-color:var(--mocha)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px;padding:10px 5vw 50px;max-width:1200px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column}
+.ic{height:90px;border-radius:10px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:2.4rem;margin-bottom:12px}
+.tag{font:.72rem system-ui,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.card h3{margin:4px 0;font-weight:400;font-size:1.08rem}
+.card p{margin:0 0 14px;color:var(--muted);font-size:.88rem;flex:1}
+.row{display:flex;justify-content:space-between;align-items:center}
+.price{font-size:1.15rem;color:var(--mocha)}
+.add{background:var(--gold);color:var(--on-gold);border:0;padding:8px 14px;border-radius:8px;font-size:.85rem}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(400px,100%);background:var(--bg);border-left:1px solid var(--line);transform:translateX(100%);transition:transform .25s;z-index:20;display:flex;flex-direction:column;padding:calc(18px + env(safe-area-inset-top,0px)) 20px calc(18px + env(safe-area-inset-bottom,0px))}
+.drawer.open{transform:none}
+.drawer h2{font-weight:400;margin:0 0 10px}
+#items{flex:1;overflow-y:auto}
+.it{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--line);font-size:.92rem}
+.qty{display:flex;align-items:center;gap:6px;font-family:system-ui,sans-serif}
+.qty button{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--text)}
+.total{display:flex;justify-content:space-between;font-size:1.2rem;padding:12px 0}
+input,textarea{width:100%;padding:10px;margin-bottom:8px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);font:inherit;font-size:.9rem}
+.send{width:100%;background:var(--mocha);color:var(--bg);border:0;padding:12px;border-radius:10px;font-size:1rem}
+.close{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:16px;background:none;border:0;color:var(--muted);font-size:1.4rem}
+.note{font:.78rem system-ui,sans-serif;color:var(--muted);text-align:center;margin-top:8px}
+footer{text-align:center;padding:30px 5vw;color:var(--muted);font:.85rem system-ui,sans-serif;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Aurum <b>Labs</b></div>
+  <button class="cartbtn" onclick="toggle(true)">Basket<span id="count">0</span></button>
+</header>
+
+<section class="hero">
+  <h1>Tech parts, ordered with care.</h1>
+  <p>PC components, Arduino kits, 3D printing supplies and local-AI hardware. Build your basket and send us your order request.</p>
+</section>
+
+<div class="filters" id="filters"></div>
+<main class="grid" id="grid"></main>
+
+<aside class="drawer" id="drawer" aria-label="Basket">
+  <button class="close" onclick="toggle(false)" aria-label="Close">×</button>
+  <h2>Your basket</h2>
+  <div id="items"></div>
+  <div class="total"><span>Total</span><span id="total">£0.00</span></div>
+  <input id="name" placeholder="Your name" autocomplete="name">
+  <input id="contact" placeholder="Your email or phone" autocomplete="email">
+  <textarea id="msg" rows="2" placeholder="Notes (optional)"></textarea>
+  <button class="send" onclick="send()">Send order request</button>
+  <div class="note">This opens an email to the studio. No payment is taken on this site.</div>
+</aside>
+
+<footer>© Aurum Labs · Prices are examples · Contact: samcooling1456@gmail.com</footer>
+
+<script>
+const P=[
+{id:1,c:"PC Parts",n:"8-Core Desktop Processor",d:"Fast, efficient CPU for gaming and builds.",p:229,e:"🧠"},
+{id:2,c:"PC Parts",n:"16GB DDR5 Memory Kit",d:"2 × 8GB, 6000MHz, low profile.",p:64.99,e:"💾"},
+{id:3,c:"PC Parts",n:"1TB NVMe SSD",d:"Gen4 drive with fast read and write speeds.",p:74.5,e:"⚡"},
+{id:4,c:"PC Parts",n:"750W Gold Power Supply",d:"Fully modular, quiet fan, 10-year warranty.",p:109,e:"🔌"},
+{id:5,c:"Arduino",n:"Arduino Starter Kit",d:"Board, breadboard, sensors, LEDs and guide.",p:42,e:"🔧"},
+{id:6,c:"Arduino",n:"Sensor Pack (37 pcs)",d:"Temperature, motion, light, sound and more.",p:18.99,e:"📡"},
+{id:7,c:"Arduino",n:"Servo Motor Set (5 pcs)",d:"Micro servos for robot arms and projects.",p:14.5,e:"🦾"},
+{id:8,c:"3D Printing",n:"PLA Filament 1kg",d:"1.75mm, ivory white, consistent diameter.",p:19.99,e:"🧵"},
+{id:9,c:"3D Printing",n:"Hardened Nozzle Set",d:"0.4mm steel nozzles, pack of 3.",p:12.99,e:"🔩"},
+{id:10,c:"AI & Cooling",n:"12GB Graphics Card",d:"Great for running local AI models.",p:389,e:"🎛️"},
+{id:11,c:"AI & Cooling",n:"Tower CPU Cooler",d:"Dual-fan air cooler with quiet curve.",p:39.95,e:"❄️"},
+{id:12,c:"AI & Cooling",n:"120mm Case Fans (3 pack)",d:"Quiet PWM fans with neutral finish.",p:24.5,e:"🌀"}
+];
+const cats=["All",...new Set(P.map(x=>x.c))];
+let cat="All",cart={};
+const $=id=>document.getElementById(id);
+const money=n=>"£"+n.toFixed(2);
+function esc(s){return String(s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]))}
+function drawFilters(){$("filters").innerHTML=cats.map(c=>`<button class="${c===cat?"on":""}" onclick="setCat('${c}')">${esc(c)}</button>`).join("")}
+function setCat(c){cat=c;drawFilters();drawGrid()}
+function drawGrid(){
+  $("grid").innerHTML=P.filter(x=>cat==="All"||x.c===cat).map(x=>`
+  <div class="card"><div class="ic">${x.e}</div><div class="tag">${esc(x.c)}</div>
+  <h3>${esc(x.n)}</h3><p>${esc(x.d)}</p>
+  <div class="row"><span class="price">${money(x.p)}</span><button class="add" onclick="add(${x.id})">Add</button></div></div>`).join("");
+}
+function add(id){cart[id]=(cart[id]||0)+1;drawCart()}
+function chg(id,d){cart[id]=(cart[id]||0)+d;if(cart[id]<=0)delete cart[id];drawCart()}
+function drawCart(){
+  const ids=Object.keys(cart);let t=0,n=0;
+  $("items").innerHTML=ids.length?ids.map(i=>{const x=P.find(p=>p.id==i),q=cart[i];t+=x.p*q;n+=q;
+    return `<div class="it"><span>${esc(x.n)}</span><span class="qty"><button onclick="chg(${i},-1)">−</button>${q}<button onclick="chg(${i},1)">+</button></span><span>${money(x.p*q)}</span></div>`}).join("")
+    :'<p class="note">Your basket is empty.</p>';
+  $("total").textContent=money(t);$("count").textContent=n;
+}
+function toggle(o){$("drawer").classList.toggle("open",o)}
+function send(){
+  const ids=Object.keys(cart);
+  if(!ids.length){alert("Add something to your basket first.");return}
+  const name=$("name").value.trim(),contact=$("contact").value.trim();
+  if(!name||!contact){alert("Please add your name and a way to contact you.");return}
+  let t=0;
+  const lines=ids.map(i=>{const x=P.find(p=>p.id==i),q=cart[i];t+=x.p*q;return `${q} x ${x.n} - ${money(x.p*q)}`});
+  const body=`Order request for Aurum Labs\n\nName: ${name}\nContact: ${contact}\n\n${lines.join("\n")}\n\nTotal: ${money(t)}\n\nNotes: ${$("msg").value.trim()||"None"}`;
+  location.href="mailto:samcooling1456@gmail.com?subject="+encodeURIComponent("Order request from "+name)+"&body="+encodeURIComponent(body);
+}
+drawFilters();drawGrid();drawCart();
+</script>
+</body>
+</html>
